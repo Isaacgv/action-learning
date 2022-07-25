@@ -127,3 +127,21 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Apple Stuff
+.DS_Store
+
+#streamlit
+.idea/
+.idea/*
+
+#postgres confi
+database.ini
+
+#vscode
+.vscode
+.vscode/*
+
+
+#Data 
+data/
