@@ -145,3 +145,6 @@ database.ini
 
 #Data 
 data/
+
+#video
+videos/
