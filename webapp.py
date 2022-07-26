@@ -5,6 +5,7 @@ import av
 import mediapipe as mp
 import streamlit as st
 import mediapipe as mp
+import subprocess
 
 # Live Camera Stream
 
@@ -67,18 +68,13 @@ def object_detection_video():
     """
     )
     st.title("Webcam Live Feed")
-    frameWidth = 640
-    frameHeight = 480
-    cap = cv2.VideoCapture(-1,cv2.CAP_DSHOW)
-    cap.set(3, frameWidth)
-    cap.set(4, frameHeight)
-    cap.set(10,150)
-    while cap.isOpened():
-        success, img = cap.read()
-        if success:
-            cv2.imshow("Result", img)
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
+    run =st.button("Start")
+    stop = st.button("Stop")
+    if run:
+        path ="videos/test.mp4"
+        subprocess.run(["python", "camera.py",path])
+  
+    
         
     
 def object_detection_image(): 
