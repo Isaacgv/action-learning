@@ -1,3 +1,4 @@
+from pickle import TRUE
 import cv2
 import sys
 import time
@@ -13,13 +14,13 @@ height= int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
 writer= cv2.VideoWriter(video_path, cv2.VideoWriter_fourcc(*'DIVX'), 20, (width,height))
 font = cv2.FONT_HERSHEY_SIMPLEX
-
+        
 while True :
 
-    ret,frame= cap.read()
-    
-    cv2.imshow('frame', frame)
-    
+    ret,frame= cap.read()       
+    frame=cv2.flip(frame,1)
+    cv2.imshow('frame', frame)           
+
     k = cv2.waitKey(1)
     
     if k == ord('s'):
@@ -32,10 +33,21 @@ while True :
             # specify the font and draw the
             # countdown using puttext
          
-            cv2.putText(frame, str(TIMER), (int(width/2), int(height/2)),
+            text = str(TIMER)
+
+            # get boundary of this text
+            textsize = cv2.getTextSize(text, font, 1, 2)[0]
+
+            # get coords based on boundary
+            textX = (frame.shape[1] - textsize[0]) / 2
+            textY = (frame.shape[0] + textsize[1]) / 2
+            
+            frame=cv2.flip(frame,1)
+            cv2.putText(frame, text, (int(textX), int(textY)),
                         font, 5, (0, 0, 255), 5, cv2.LINE_AA)
-                
+     
             cv2.imshow('frame', frame)
+            
             cv2.waitKey(1)
 
             # current time
@@ -45,7 +57,6 @@ while True :
                 prev = cur
                 TIMER = TIMER-1
     elif TIMER < 0:
-        cv2.waitKey(1)
         writer.write(frame)
 
         # Update and keep track of Countdown
@@ -58,4 +69,9 @@ while True :
 cap.release()
 writer.release()
 cv2.destroyAllWindows()
-sys.exit()
+
+if TIMER>0:
+    sys.exit(0)
+else:
+    sys.exit(2)
+
