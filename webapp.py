@@ -55,6 +55,7 @@ def object_detection_video():
     st.subheader("Option 2 - Redcord using Webcam")
     st.markdown("<p style='font-size: 20px' ><b>Instructions</b><ul><li>Press ( S ) to Start</li><li>Wait the timer for 3 Seconds</li><li>Press ( Q ) to Quit</p> ", unsafe_allow_html=True)
     
+    
     run =st.button("Launch Webcam")
     file_code = str(uuid.uuid4())[:8]
     path ="videos/keepers/"+file_code+".mp4"
