@@ -13,7 +13,7 @@ model = tf.keras.models.load_model(PATH + "/train_tl")
 with open(PATH + '/labels_encoder.pkl', 'rb') as f:
     labels_encoder = pickle.load(f)
 
-path = '../../videos/keepers/63211c9e-3.mp4'
+path = '../../videos/keepers/0bda5054-c.mp4'
 cap = cv2.VideoCapture(path)
 keypoints_frames = []
 count = 0

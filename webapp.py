@@ -40,8 +40,7 @@ def object_detection_video():
   
     st.subheader("Option 1 - Upload a video")
     file = st.file_uploader('', type = ['mp4'])
-    
-    
+
     if file is not None:
         file_details = "File: Name: "+ str(file.name)+", Type: " +str(file.type)
         st.video(file)
@@ -57,7 +56,7 @@ def object_detection_video():
     st.markdown("<p style='font-size: 20px' ><b>Instructions</b><ul><li>Press ( S ) to Start</li><li>Wait the timer for 3 Seconds</li><li>Press ( Q ) to Quit</p> ", unsafe_allow_html=True)
     
     run =st.button("Launch Webcam")
-    file_code = str(uuid.uuid4())[:10]
+    file_code = str(uuid.uuid4())[:8]
     path ="videos/keepers/"+file_code+".mp4"
     showthem =False
     if run:
@@ -76,19 +75,20 @@ def object_detection_video():
                  pass
         
 def object_detection_image(): 
-    st.title('Sign Language Recognition for Images')
-    st.subheader("""
-    This project takes in an image and outputs the image with bounding boxes created around the objects in the image showing the sign language detected in the image.
-    """)
-
-    file = st.file_uploader('Upload Image', type = ['jpg','png','jpeg'])
+    new_title = '<p style="font-size: 42px; font-weight:bolder;">Sign Language Recognition for &#127878;<br/></p>'
+    st.markdown(new_title, unsafe_allow_html=True)
+    st.markdown("""<p style="font-size: 25px; font-weight:bolder;">
+    This Sign Language Detection Model takes in an image as an input and then outputs that image with bounding boxes """ +
+    """describing the ASL equivalant word in natutral Langauge</br></br> &#128075; &#10133; &#129302; &#10145; Hellow !</p></br>""", unsafe_allow_html=True)
+  
+    file = st.file_uploader('', type = ['jpg','png','jpeg'])
     if file is not None:
-        file_details = {"FileName":file.name,"FileType":file.type}
-        st.write(file_details)
         st.image(file)
-        with open(os.path.join("images",file.name),"wb") as f: 
-            f.write(file.getbuffer())         
-            st.success("Saved File")
+        save =st.button("Save Image")  
+        if save: 
+            with open(os.path.join("images",file.name),"wb") as f: 
+                f.write(file.getbuffer())         
+                st.success("Saved File")
 
 def main():
     new_title = '<p style="font-size: 42px; font-weight:bolder;">SignMe &#128406;<br/></p><p style="font-size: 38px;">Welcome to our App!</p>'
