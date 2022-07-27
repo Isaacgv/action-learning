@@ -4,20 +4,21 @@ import tensorflow as tf
 import mediapipe as mp
 import pickle
 import numpy as np
+import sys
+sys.path.append("..")
 
-PATH = ".."
+video_path = sys.argv[1]
 
-model = tf.keras.models.load_model(PATH + "/train_tl")
+model = tf.keras.models.load_model("mediapipe/train_tl")
 
-with open(PATH + '/labels_encoder.pkl', 'rb') as f:
+with open('mediapipe/labels_encoder.pkl', 'rb') as f:
     labels_encoder = pickle.load(f)
 
-path = '../../videos/keepers/0bda5054-c.mp4'
+path = video_path
 cap = cv2.VideoCapture(path)
 keypoints_frames = []
 count = 0
 result_label = ""
-
 
 
 le = labels_encoder
