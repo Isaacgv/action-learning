@@ -64,6 +64,8 @@ with mp_hands.Hands(
     
   while cap.isOpened():
     success, image = cap.read()
+    if image is None:
+        break
     
     if not success:
       print("Ignoring empty camera frame.")
@@ -106,7 +108,6 @@ with mp_hands.Hands(
         #print(mp_hands.HAND_CONNECTIONS)
         
     # Flip the image horizontally for a selfie-view display.
-    image = cv2.flip(image, 1)
     cv2.putText(image, ' '.join(result_label), (3,30), 
                        cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
     
