@@ -6,19 +6,18 @@ import sys
 import time
 import sys 
 
-def save_frames(label, path_to_video):
+def save_frames(label, path_to_video, video_time=3):
     cap = cv2.VideoCapture(path_to_video)
     user = path_to_video.split('/')[-1].split('.')[0]
     path = "dataset/" + label + "/" + user 
     fps = cap.get(cv2.CAP_PROP_FPS)
     length = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-    capture_time = fps//3
+    capture_time = fps//video_time
     print(capture_time)
     count_frame = 0
     save_frame = 0
 
-    while (True):
-        
+    while (True): 
         success, frame = cap.read()
         if frame is not None:
             count_frame = count_frame + 1
@@ -43,6 +42,3 @@ def save_frames(label, path_to_video):
     cap.release()
 
     cv2.destroyAllWindows()
-
-
-
