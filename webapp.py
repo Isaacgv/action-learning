@@ -12,6 +12,8 @@ import subprocess
 from os.path import exists
 import uuid 
 import shutil
+from PIL import Image
+import time
 
 import sys
 sys.path.append("..")
@@ -74,12 +76,20 @@ def sign_recognition_video():
         elif exists(path):
             st.write("Video Was Redorded!")
             st.video(path)
-            process =subprocess.run(["python", "mediapipe/utils/test.py",'videos/keepers/'+file_code+'.mp4'])
+            process =subprocess.run(["python", "mediapipe/utils/test.py",'videos/keepers/'+file_code+'.mp4',file_code])
             keep =st.checkbox("Keep Video")
             delete=st.checkbox("Delete Video")
+            time.sleep(1)
+            f = open("temp/result.txt","r")
+            x = (f.read())
+            
+            st.video("videos/inference/"+file_code+".mp4")
+           
             if keep:
+                
                 st.write("Video Was Submited Sucessefully!!")
                 return file_code
+            
             elif delete:
                  pass
         
@@ -113,7 +123,7 @@ def main():
      The Github repository can be found 
     [here](https://github.com/Isaacgv/action-learning/tree/main)""")
     st.sidebar.title("Select Activity")
-    choice  = st.sidebar.selectbox("MODE",("About","Sign Language Recognition(Video)")) # "Sign Language Recognition(Image)",
+    choice  = st.sidebar.selectbox("MODE",("About","Sign Language Recognition(Video)","Docs")) # "Sign Language Recognition(Image)",
     #["Show Instruction","Landmark identification","Show the #source code", "About"]
     
     # if choice == "Sign Language Recognition(Image)":
@@ -129,6 +139,49 @@ def main():
         file_code =sign_recognition_video()
     elif choice == "About":
         print()
+    elif choice=="Docs":
+        st.markdown(""" ## User Guide: :clipboard:
+
+* Using our application you will be able to detect, translate sign language into natural words
+* Create/use your own sign language too ! 
+* This application is for educational purposes and anyone who wants to discover and learn
+  sign language
+
+P.S We are using American Sign Language (ASL) you can find more details here
+ [ASL](https://www.signingsavvy.com/)
+
+## Features:
+##### Detecting Sign Language :
+ There are two ways you can detect sign language:
+ * Click on Sign Language Recognition(Video)
+
+##### Option 1
+ * Upload videos from your file 
+""")
+        image = Image.open("doc_img/upload.png")
+        st.image(image)
+
+        st.markdown(""" * After upload a video you can replay, save it or use another one """)
+        image = Image.open("doc_img/save_vid.png")
+        st.image(image)
+
+        st.markdown(""" 
+        * When clicking on save the detection of the sign language will be displayed, a video a long with the word. Try it !!
+        """)
+
+        st.markdown("##### Option 2")
+        st.markdown(""" 
+        * You can record a video yourself on our website 
+        * Click on the Launch Webcam button to open the webcam
+        *  Press on S to start the countdown 
+        *  Press on Q to stop the recording 
+        *  You can either record another video or save it
+                        """)
+        image_1 = Image.open("doc_img/webc.png")
+        st.image(image_1)
+        image = Image.open("doc_img/counter.png")
+        st.image(image)
+
         
 
 if __name__ == '__main__':

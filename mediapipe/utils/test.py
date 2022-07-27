@@ -5,9 +5,11 @@ import mediapipe as mp
 import pickle
 import numpy as np
 import sys
+import os
 sys.path.append("..")
 
 video_path = sys.argv[1]
+file_code = sys.argv[2]
 
 model = tf.keras.models.load_model("mediapipe/train_tl")
 
@@ -27,6 +29,15 @@ mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_hands = mp.solutions.hands
 
+def result(path,result_label,file_code):
+    import sys
+# calculate stuff
+    os.system("cp "+path+" videos/inference/"+file_code+".mp4")
+    with open('temp/result.txt', 'w') as fh:
+        fh.write(result_label[0])
+    return result_label[0]
+    
+    
 
 def extract_keypoints(results):
     hand_label_result = dict()
@@ -91,7 +102,6 @@ with mp_hands.Hands(
             result_label = le.inverse_transform([max_label])
         else:
             result_label = ""
-        print(result_label)
         count = 0
         keypoints_frames = []
     
@@ -115,5 +125,5 @@ with mp_hands.Hands(
     
     if cv2.waitKey(5) & 0xFF == 27:
       break
-    
 cap.release()
+result(path,result_label,file_code)
