@@ -6,6 +6,7 @@ import numpy as np
 import pickle
 from sklearn import preprocessing
 from sklearn.utils import shuffle
+import glob
 
 
 def augment(image_label):
@@ -19,6 +20,12 @@ def augment(image_label):
 
     return image
 
+def save_labels_keypoints(labels, keypoints):
+    with open('mediapipe/labels.pkl', 'wb') as f:
+        pickle.dump(labels, f)
+    with open('mediapipe/keypoints.pkl', 'wb') as f:
+        pickle.dump(keypoints, f)
+
 def train_process(new_label:str, new_keypoints:list):
 
     le = preprocessing.LabelEncoder()
@@ -30,7 +37,7 @@ def train_process(new_label:str, new_keypoints:list):
         labels = pickle.load(f)
 
     keypoints.append(new_keypoints)
-    labels.append(new_label)
+    labels.extend([new_label])
 
     le.fit(labels)
     labels_num = le.transform(labels)
@@ -63,8 +70,32 @@ def train_process(new_label:str, new_keypoints:list):
     model.fit(tf_train_data, epochs=400, batch_size=batch_size)
     model.save("mediapipe/train_tl")
 
-    with open('mediapipe/labels.pkl', 'wb') as f:
-        pickle.dump(labels, f)
+    save_labels_keypoints(labels, keypoints)
 
-    with open('mediapipe/keypoints.pkl', 'wb') as f:
-        pickle.dump(keypoints, f)
+
+def dataset_path_labels(path_dataset):
+    
+    txtfiles = []
+    labels = []
+    files = []
+    names = []
+    for file in glob.glob(path_dataset + "/*"):
+        label = file.split("/")[-1]
+        
+        for file_img in glob.glob(file + "/*/images/*.jpg"):
+            name = file_img.split("/")[3]
+            
+            if names == []:
+                names.append(name)
+                #labels.append(label)
+                
+            if name in names:
+                files.append(file_img)
+                
+            else:
+                txtfiles.append(files)
+                files = []
+                names.append(name)
+                labels.append(label)
+                
+    return txtfiles, labels
