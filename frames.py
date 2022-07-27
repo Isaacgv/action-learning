@@ -40,7 +40,7 @@ def save_frames(label, path_to_video, video_time=3):
     cap.release()
 
     cv2.destroyAllWindows()
-    
+
 def main():
     if len(sys.argv) > 0:
         path_to_video = sys.argv[1]
@@ -49,3 +49,4 @@ def main():
         return 1
     else: 
         return 0
+=======
