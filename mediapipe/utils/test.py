@@ -1,0 +1,118 @@
+
+import cv2
+import tensorflow as tf
+import mediapipe as mp
+import pickle
+import numpy as np
+
+
+PATH = ".."
+
+model = tf.keras.models.load_model(PATH + "/train_tl")
+
+with open(PATH + '/labels_encoder.pkl', 'rb') as f:
+    labels_encoder = pickle.load(f)
+
+path = '../../videos/keepers/63211c9e-3.mp4'
+cap = cv2.VideoCapture(path)
+keypoints_frames = []
+count = 0
+result_label = ""
+
+
+
+le = labels_encoder
+
+mp_drawing = mp.solutions.drawing_utils
+mp_drawing_styles = mp.solutions.drawing_styles
+mp_hands = mp.solutions.hands
+
+
+def extract_keypoints(results):
+    hand_label_result = dict()
+    for hand in results.multi_handedness:
+        hand_label_result[hand.classification[0].index] = hand.classification[0].label
+
+    keypoints = []
+    for hand in results.multi_hand_landmarks:
+        hand_keypoints = []
+        for point in range(21):
+            landmark = hand.landmark[point]
+            hand_keypoints.extend([landmark.x, landmark.y, landmark.z])
+            
+        keypoints.append(hand_keypoints)
+        
+    #print(len(keypoints))
+    #print(hand_label_result)
+    
+    if len(keypoints) == 1:
+        keypoints.append(list(np.zeros(len(keypoints[0]))))
+    try:
+        if hand_label_result[0] != 'Left':
+            keypoints = keypoints[1] + keypoints[0]
+        else:
+            keypoints = keypoints[0] + keypoints[1]
+    except:
+        keypoints = keypoints[1] + keypoints[0]
+    return keypoints
+
+
+with mp_hands.Hands(
+    model_complexity=0,
+    min_detection_confidence=0.5,
+    min_tracking_confidence=0.5) as hands:
+    
+  while cap.isOpened():
+    success, image = cap.read()
+    
+    if not success:
+      print("Ignoring empty camera frame.")
+      # If loading a video, use 'break' instead of 'continue'.
+      continue
+
+    # To improve performance
+    image.flags.writeable = False
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    results = hands.process(image)
+
+    # Draw the hand annotations on the image.
+    image.flags.writeable = True
+    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+    count += 1
+    if results.multi_hand_landmarks:
+      key_points = extract_keypoints(results)
+      keypoints_frames.append(key_points)
+      if np.array([keypoints_frames]).shape[1]>=30 and count >=30:
+        predict = model.predict(np.array([keypoints_frames]))[0]
+        max_label = np.argmax(predict)
+        if predict[max_label] > 0.5:
+            result_label = le.inverse_transform([max_label])
+        else:
+            result_label = ""
+        print(result_label)
+        count = 0
+        keypoints_frames = []
+    
+      
+      for hand_landmarks in results.multi_hand_landmarks:
+        #print('hand_landmarks:', hand_landmarks)
+        mp_drawing.draw_landmarks(
+            image,
+            hand_landmarks,
+            mp_hands.HAND_CONNECTIONS,
+            mp_drawing_styles.get_default_hand_landmarks_style(),
+            mp_drawing_styles.get_default_hand_connections_style())
+        #print(hand_landmarks)
+        #print(mp_hands.HAND_CONNECTIONS)
+        
+    # Flip the image horizontally for a selfie-view display.
+    image = cv2.flip(image, 1)
+    cv2.putText(image, ' '.join(result_label), (3,30), 
+                       cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+    
+    cv2.imshow('MediaPipe Hands', image)
+    
+    if cv2.waitKey(5) & 0xFF == 27:
+      break
+    
+cap.release()

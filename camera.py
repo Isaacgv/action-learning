@@ -1,5 +1,3 @@
-from pickle import TRUE
-from threading import Timer
 import cv2
 import sys
 import time
@@ -9,7 +7,7 @@ from pygame import mixer
 video_path = sys.argv[1]
 TIMER = 3
 TIMER_START=0
-TIMER_DURATION = 20
+TIMER_DURATION = 3
 
 cap= cv2.VideoCapture(0)
 
@@ -36,10 +34,6 @@ while True and TIMER_DURATION>0:
 
         while TIMER >= 0:
             ret, frame = cap.read()
-
-            # Display countdown on each frame
-            # specify the font and draw the
-            # countdown using puttext
          
             text = str(TIMER)
 
