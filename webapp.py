@@ -1,6 +1,8 @@
 
+from ast import IsNot
 import os
 import cv2
+from git import safe_decode
 import numpy as np
 import av
 import mediapipe as mp
@@ -8,22 +10,55 @@ import streamlit as st
 import mediapipe as mp
 import subprocess
 from os.path import exists
-import web_services as sv
 import uuid 
-  
+import shutil
 
+
+### Styling the App
+streamlit_style = """
+			<style>
+			@import url('https://fonts.googleapis.com/css?family=Open+Sans&display=swap');
+
+			html, body, [class*="css"]  {
+			font-family: 'Open Sans'
+			}
+			</style>
+			"""
+   
+st.markdown(streamlit_style, unsafe_allow_html=True)
 # Live Camera Stream
 
+
+
+# functions for recording detection
 def object_detection_video():
-    st.title("Sign Language Recognition for Videos")
-    st.subheader("""
-    This object detection project takes in a video and outputs the video with bounding boxes created around the objects in the video 
-    """
-    )
-    st.title("Redcord using Webcam")
+    new_title = '<p style="font-size: 42px; font-weight:bolder;">Sign Language Recognition for &#127909;<br/></p>'
+    st.markdown(new_title, unsafe_allow_html=True)
+    st.markdown("""<p style="font-size: 25px; font-weight:bolder;">
+    This Sign Language Detection Model takes in a video as an input and then outputs that video with bounding boxes """ +
+    """describing the ASL equivalant word in natutral Langauge</br></br> &#129330; &#10133; &#129302; &#10145; Thank you !</p></br>""", unsafe_allow_html=True)
+  
+    st.subheader("Option 1 - Upload a video")
+    file = st.file_uploader('', type = ['mp4'])
+    
+    
+    if file is not None:
+        file_details = "File: Name: "+ str(file.name)+", Type: " +str(file.type)
+        st.video(file)
+        save =st.button("Save Video")  
+        if save: 
+            with open(os.path.join("videos/keepers",file.name),"wb") as f: 
+                f.write(file.getbuffer())         
+                st.success("Saved File")
+            
+            
+    st.markdown("<hr style= size='6', color=black> ", unsafe_allow_html=True)
+    st.subheader("Option 2 - Redcord using Webcam")
+    st.markdown("<p style='font-size: 20px' ><b>Instructions</b><ul><li>Press ( S ) to Start</li><li>Wait the timer for 3 Seconds</li><li>Press ( Q ) to Quit</p> ", unsafe_allow_html=True)
+    
     run =st.button("Launch Webcam")
     file_code = str(uuid.uuid4())[:10]
-    path ="videos/"+file_code+".mp4"
+    path ="videos/keepers/"+file_code+".mp4"
     showthem =False
     if run:
         process =subprocess.run(["python", "camera.py",path])
@@ -32,24 +67,28 @@ def object_detection_video():
         elif exists(path):
             st.write("Video Was Redorded!")
             st.video(path)
-            showthem=True
-    if showthem : 
-        keep =st.button("Keep it"),
-        tryAgain =st.button("Try again")
+            keep =st.checkbox("Keep Video")
+            delete=st.checkbox("Delete Video")
+            if keep:
+                st.write("Video Was Submited Sucessefully!!")
+                return file_code
+            elif delete:
+                 pass
         
-        if keep:
-            st.write("Video Was Submited Sucessefully!!")  
-        elif tryAgain:
-                pass
-                        
-    
 def object_detection_image(): 
     st.title('Sign Language Recognition for Images')
     st.subheader("""
     This project takes in an image and outputs the image with bounding boxes created around the objects in the image showing the sign language detected in the image.
     """)
-    file = st.file_uploader('Upload Image', type = ['jpg','png','jpeg'])
 
+    file = st.file_uploader('Upload Image', type = ['jpg','png','jpeg'])
+    if file is not None:
+        file_details = {"FileName":file.name,"FileType":file.type}
+        st.write(file_details)
+        st.image(file)
+        with open(os.path.join("images",file.name),"wb") as f: 
+            f.write(file.getbuffer())         
+            st.success("Saved File")
 
 def main():
     new_title = '<p style="font-size: 42px; font-weight:bolder;">SignMe &#128406;<br/></p><p style="font-size: 38px;">Welcome to our App!</p>'
@@ -79,18 +118,7 @@ def main():
         read_me_0.empty()
         read_me.empty()
         read_repo.empty()
-        object_detection_video()
-        #if object_detection_video.has_beenCalled:
-        # try:
-
-        #     clip = moviepy.VideoFileClip('detected_video.mp4')
-        #     clip.write_videofile("myvideo.mp4")
-        #     st_video = open('myvideo.mp4','rb')
-        #     video_bytes = st_video.read()
-        #     st.video(video_bytes)
-        #     st.write("Detected Video") 
-        # except OSError:
-        #     ''
+        file_code =object_detection_video()
 
     elif choice == "About":
         print()
