@@ -1,4 +1,5 @@
 from pickle import TRUE
+from threading import Timer
 import cv2
 import sys
 import time
@@ -6,7 +7,9 @@ import os
 from pygame import mixer 
 
 video_path = sys.argv[1]
-TIMER = int(3)
+TIMER = 3
+TIMER_START=0
+TIMER_DURATION = 20
 
 cap= cv2.VideoCapture(0)
 
@@ -19,11 +22,12 @@ font = cv2.FONT_HERSHEY_SIMPLEX
 mixer.init()
 mixer.music.load('audios/beep-07a.wav', 'wav')
 
-while True :
 
+while True and TIMER_DURATION>0:
     ret,frame= cap.read()       
-    frame=cv2.flip(frame,1)
-    cv2.imshow('frame', frame)           
+    if TIMER >0:
+        frame=cv2.flip(frame,1)
+        cv2.imshow('frame', frame)           
 
     k = cv2.waitKey(1)
     
@@ -61,11 +65,31 @@ while True :
                 mixer.music.play() 
                 prev = cur
                 TIMER = TIMER-1
+        start_time = time.time()
                 
     elif TIMER < 0:
-        writer.write(frame)
+        elapsed_time = time.time() - start_time
+        
+        if int(elapsed_time)>TIMER_DURATION:
+            break
+        
+        text= "00:" + str(int(elapsed_time)).zfill(2)
 
-        # Update and keep track of Countdown
+        # get boundary of this text
+        textsize = cv2.getTextSize(text, font, 1, 2)[0]
+        
+        textX = (frame.shape[1] - textsize[0])-50
+        textY = (frame.shape[0] + textsize[1])-50
+        
+        frame=cv2.flip(frame,1)
+        cv2.putText(frame, text, (int(textX),int(textY)),
+        font, 1, (0, 0, 255), 2, cv2.LINE_AA)
+        
+        cv2.imshow('frame', frame)        
+        
+        writer.write(frame)
+        
+        # Update and keep track of Countdownsq
         # if time elapsed is one second
         # than decrease the counter
 
