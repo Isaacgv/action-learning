@@ -1,3 +1,4 @@
+from turtle import width
 import streamlit as st
 import subprocess
 import os
@@ -88,32 +89,40 @@ def sign_recognition_Video_retraining():
     st.markdown("<p style='font-size: 20px' ><b>Instructions</b><ul><li>Press ( S ) to Start</li><li>Wait the "+
                 "timer for 3 Seconds</li><li>Press ( Q ) to Quit</p> ", unsafe_allow_html=True)
     
-    
+    col1, col2, col3= st.columns(3)
+    with col1:
+        title = st.text_input('Give your Sign a Name', 'Name goes here')
+        
     run =st.button("Launch Webcam")
-    file_code =str(uuid.uuid4())[:8]
+    file_code =title.strip()
     path ="videos/keepers/"+file_code+".mp4"
     
-    showthem =False
     if run:
-        process_training =subprocess.run(["python", "camera.py",path])
-       
-        print(path)
-        if process_training.returncode ==0:
-            st.write("Nothing Was Redorded!")
-        
-        elif exists(path):
-            st.write("Video Was Redorded!")
-            st.video(path)
-            title = st.text_input('', 'Sign Title')
-            st.write('Name your Sign Language', title)
-            process_training =subprocess.run(["python", "frames",'videos/keepers/'+file_code+'.mp4',''])
-            keep =st.checkbox("Keep Video")
-            delete=st.checkbox("Delete Video")
-            if keep:
-                st.write("Video Was Submited Sucessefully!!")
-                return file_code
-            elif delete:
-                 pass
+        if len(title) ==0 :
+            st.error("Please Enter a Sign Name")
+        elif title == "Name goes here":
+            st.error("Please Enter a valid Sign Name")
+        elif len(title) > 15 :
+            st.error("You can't use more than 10 characters")
+        else:
+            process_training =subprocess.run(["python", "camera.py",path])
+            print(path)
+            if process_training.returncode ==0:
+                st.write("Nothing Was Redorded!")
+            
+            elif exists(path):
+                st.write("Video Was Redorded!")
+                st.video(path)
+            
+                st.write('Name your Sign Language', title)
+                process_training =subprocess.run(["python", "frames.py",'videos/keepers/'+file_code+'.mp4',title])
+                keep =st.checkbox("Keep Video")
+                delete=st.checkbox("Delete Video")
+                if keep:
+                    st.write("Video Was Submited Sucessefully!!")
+                    return file_code
+                elif delete:
+                    pass
     
 def main():
     new_title = '<p style="font-size: 42px; font-weight:bolder;">SignMe &#128406;<br/></p><p style="font-size: 32px;">Welcome to our App!</p>'
