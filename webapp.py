@@ -4,7 +4,7 @@ import os
 import cv2
 from git import safe_decode
 import numpy as np
-import av
+#import av
 import mediapipe as mp
 import streamlit as st
 import mediapipe as mp
@@ -62,12 +62,15 @@ def sign_recognition_video():
     run =st.button("Launch Webcam")
     file_code =str(uuid.uuid4())[:8]
     path ="videos/keepers/"+file_code+".mp4"
+    
     showthem =False
     if run:
         process =subprocess.run(["python", "camera.py",path])
        
+        print(path)
         if process.returncode ==0:
             st.write("Nothing Was Redorded!")
+        
         elif exists(path):
             st.write("Video Was Redorded!")
             st.video(path)
