@@ -6,40 +6,43 @@ import sys
 import time
 import sys 
 
-video_path = sys.argv[1]
-labels = sys.argv[2]
-path_to_video = video_path
-cap = cv2.VideoCapture(path_to_video)
-frameNr = 0
-frame_rate = 30
+def save_frames(label, path_to_video):
+    cap = cv2.VideoCapture(path_to_video)
+    user = path_to_video.split('/')[-1].split('.')[0]
+    path = "dataset/" + label + "/" + user 
+    fps = cap.get(cv2.CAP_PROP_FPS)
+    length = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    capture_time = fps//3
+    print(capture_time)
+    count_frame = 0
+    save_frame = 0
 
-path = labels 
-prev = 0
-
-fps = cap.get(cv2.CAP_PROP_FPS)
-while (True):
-    
-    success, frame = cap.read()
-    if frame is not None:
-        if os.path.exists(labels):
+    while (True):
         
-            cv2.imwrite(f'{path}/images/{frameNr}.jpg', frame)
+        success, frame = cap.read()
+        if frame is not None:
+            count_frame = count_frame + 1
+            if os.path.exists(path):
+                print(count_frame, capture_time)
+                if count_frame >= capture_time:
+                    cv2.imwrite(f'{path}/images/{save_frame}.jpg', frame)
+                    save_frame = save_frame + 1
+                    count_frame = 0
+
+            else:
+                os.system("mkdir " + "/".join(path.split('/')[:2]))
+                os.system("mkdir " + path)
+                os.system("cd " + path + "&& mkdir images")
+                cv2.imwrite(f'{path}/images/{save_frame}.jpg', frame)
+                save_frame = save_frame + 1
+            cv2.waitKey(1000)
         else:
-            os.system("mkdir "+labels)
-            os.system("cd "+labels+"&& mkdir images")
-            cv2.imwrite(f'{path}/images/{frameNr}.jpg', frame)
+            break
 
-        frameNr = frameNr+1
-        cv2.waitKey(1000)
-    else:
-        break
-os.system("cp "+path_to_video+" " + labels+"/"+labels+".mp4")
-cap.release()
-cv2.destroyAllWindows()
+    os.system("cp "+ path_to_video + " " + path +"/"+label+".mp4")
+    cap.release()
 
-
-
-
+    cv2.destroyAllWindows()
 
 
 
