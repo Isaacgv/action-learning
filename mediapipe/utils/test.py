@@ -5,7 +5,6 @@ import mediapipe as mp
 import pickle
 import numpy as np
 
-
 PATH = ".."
 
 model = tf.keras.models.load_model(PATH + "/train_tl")
