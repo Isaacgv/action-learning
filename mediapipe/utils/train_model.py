@@ -7,7 +7,12 @@ import pickle
 from sklearn import preprocessing
 from sklearn.utils import shuffle
 import glob
+import mediapipe as mp
+import cv2
 
+mp_drawing = mp.solutions.drawing_utils
+mp_drawing_styles = mp.solutions.drawing_styles
+mp_hands = mp.solutions.hands
 
 def augment(image_label):
     image = image_label
@@ -99,3 +104,77 @@ def dataset_path_labels(path_dataset):
                 labels.append(label)
                 
     return txtfiles, labels
+
+
+def extract_keypoints(results):
+    hand_label_result = dict()
+    for hand in results.multi_handedness:
+        hand_label_result[hand.classification[0].index] = hand.classification[0].label
+
+    keypoints = []
+    for hand in results.multi_hand_landmarks:
+        hand_keypoints = []
+        for point in range(21):
+            landmark = hand.landmark[point]
+            hand_keypoints.extend([landmark.x, landmark.y, landmark.z])
+            
+        keypoints.append(hand_keypoints)
+        
+    if len(keypoints) == 1:
+        keypoints.append(list(np.zeros(len(keypoints[0]))))
+    try:
+        if hand_label_result[0] != 'Left':
+            keypoints = keypoints[1] + keypoints[0]
+        else:
+            keypoints = keypoints[0] + keypoints[1]
+    except:
+        keypoints = keypoints[1] + keypoints[0]
+    return keypoints
+
+
+def collect_keypoints(txtfiles):
+
+    keypoints = []
+
+    # For static images:
+    IMAGE_FILES = txtfiles
+
+    with mp_hands.Hands(
+        static_image_mode=False,
+        max_num_hands=2,
+        min_detection_confidence=0.45) as hands:
+        
+    
+        for n, file_label in enumerate(IMAGE_FILES):
+
+            keypoints_label = []
+            for idx, file in enumerate(file_label):
+
+                image = cv2.flip(cv2.imread(file), 1)
+                image = cv2.imread(file)
+                # Convert the BGR image to RGB before processing.
+                results = hands.process(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+
+                if not results.multi_hand_landmarks:
+                    continue
+                keypoints_label.append(extract_keypoints(results))
+
+                image_height, image_width, _ = image.shape
+                annotated_image = image.copy()
+
+                for hand_landmarks in results.multi_hand_landmarks:
+
+                    mp_drawing.draw_landmarks(
+                        annotated_image,
+                        hand_landmarks,
+                        mp_hands.HAND_CONNECTIONS,
+                        mp_drawing_styles.get_default_hand_landmarks_style(),
+                        mp_drawing_styles.get_default_hand_connections_style())
+
+            keypoints.append(np.array(keypoints_label))
+            return keypoints
+
+def new_keypoints_labels(path_dataset):
+    txtfiles, labels = dataset_path_labels(path_dataset)
+    keypoints = collect_keypoints(txtfiles)
+    save_labels_keypoints(labels, keypoints)
