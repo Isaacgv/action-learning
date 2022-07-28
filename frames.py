@@ -7,7 +7,7 @@ import sys
 def save_frames(label, path_to_video, video_time=3):
     cap = cv2.VideoCapture(path_to_video)
     user = path_to_video.split('/')[-1].split('.')[0]
-    path = "training/" + label + "/" + user 
+    path = "videos/training/" + label + "/" + user 
     fps = cap.get(cv2.CAP_PROP_FPS)
     length = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     capture_time = fps//video_time

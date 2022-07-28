@@ -1,11 +1,11 @@
-from turtle import width
+import time
 import streamlit as st
 import subprocess
 import os
 from os.path import exists
 import uuid 
 from PIL import Image
-
+from frames import save_frames
 
 import sys
 sys.path.append("..")
@@ -125,7 +125,8 @@ def sign_recognition_Video_retraining():
                 st.video(path)
             
                 st.write('Name your Sign Language', title)
-                process_training =subprocess.run(["python", "frames.py",'videos/keepers/'+file_code+'.mp4',title])
+                #process_training =subprocess.run(["python", "frames.py",'videos/keepers/'+file_code+'.mp4',title])
+                save_frames(title,'videos/keepers/'+file_code+'.mp4')
                 keep =st.checkbox("Keep Video")
                 delete=st.checkbox("Delete Video")
                 if keep:
