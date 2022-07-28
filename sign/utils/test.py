@@ -37,7 +37,6 @@ def result(path,result_label,file_code):
         fh.write(result_label[0])
     return result_label[0]
     
-    
 
 def extract_keypoints(results):
     hand_label_result = dict()
@@ -58,6 +57,11 @@ def extract_keypoints(results):
     
     if len(keypoints) == 1:
         keypoints.append(list(np.zeros(len(keypoints[0]))))
+        
+    elif len(keypoints) == 0:
+        keypoints.append(list(np.zeros(21*3)))
+        keypoints.append(list(np.zeros(21*3)))
+        
     try:
         if hand_label_result[0] != 'Left':
             keypoints = keypoints[1] + keypoints[0]
