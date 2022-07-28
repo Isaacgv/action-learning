@@ -1,3 +1,5 @@
+import sys
+sys.path.append("..")
 import time
 import streamlit as st
 import subprocess
@@ -6,9 +8,9 @@ from os.path import exists
 import uuid 
 from PIL import Image
 from frames import save_frames
+import sign.utils.train_model as train_model
 
-import sys
-sys.path.append("..")
+
 st.set_page_config(layout="wide")
 
 ### Styling the App
@@ -128,8 +130,9 @@ def sign_recognition_Video_retraining():
                 st.video(path)
             
                 st.write('Name your Sign Language', title)
-                #process_training =subprocess.run(["python", "frames.py",'videos/keepers/'+file_code+'.mp4',title])
-                save_frames(title,'videos/keepers/'+file_code+'.mp4')
+                #process_training =subprocess.run(["python", "frames).py",'videos/keepers/'+file_code+'.mp4',title])
+                save_frames(os.environ['USER'],title,'videos/keepers/'+file_code+'.mp4')
+                train_model.train_new_data(title,os.environ['USER'])
                 keep =st.checkbox("Keep Video")
                 delete=st.checkbox("Delete Video")
                 if keep:
