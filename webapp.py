@@ -4,10 +4,11 @@ import subprocess
 import os
 from os.path import exists
 import uuid 
+from PIL import Image
 
 import sys
 sys.path.append("..")
-
+st.set_page_config(layout="wide")
 
 ### Styling the App
 streamlit_style = """
@@ -78,12 +79,12 @@ def sign_recognition_video():
                  pass
 
 def sign_recognition_Video_retraining():
-    new_title = '<p style="font-size: 42px; font-weight:bolder;">Teach me a Sign &#x1F468;<br/></p>'
+    new_title = '<p style="font-size: 42px; font-weight:bolder;">Teach me a Sign &#129305;<br/></p>'
     st.markdown(new_title, unsafe_allow_html=True)
     st.markdown("""<p style="font-size: 25px; font-weight:bolder;">
     This Sign Language Detection Model can learn a new Sign Langauge gesture only from taking a video as an input from the user """ +
-    """</br></br> &#127909; &#10133; &#129302; &#129305;"""+
-    """ Thank you !</p></br>""", unsafe_allow_html=True)
+    """</br></br> &#127909; &#10133; &#129302; &#10145;"""+
+    """ My New Sign &#128077;!</p></br>""", unsafe_allow_html=True)
   
     st.subheader("Redcord using Webcam")
     st.markdown("<p style='font-size: 20px' ><b>Instructions</b><ul><li>Press ( S ) to Start</li><li>Wait the "+
@@ -161,7 +162,54 @@ def main():
         read_repo.empty()
    
         sign_recognition_Video_retraining()
-        
+    elif choice=="Instructions":
+        img_0.empty()   
+        img_1.empty()  
+        line_0.empty() 
+        read_me_0.empty()
+        read_me.empty()
+        read_repo.empty()
+        st.markdown(""" ## User Guide: :clipboard:
+
+        * Using our application you will be able to detect, translate sign language into natural words
+        * Create/use your own sign language too ! 
+        * This application is for educational purposes and anyone who wants to discover and learn
+        sign language
+
+        P.S We are using American Sign Language (ASL) you can find more details here
+        [ASL](https://www.signingsavvy.com/)
+
+        ## Features:
+        ##### Detecting Sign Language :
+        There are two ways you can detect sign language:
+        * Click on Sign Language Recognition(Video)
+
+        ##### Option 1
+        * Upload videos from your file 
+        """)
+        image = Image.open("images/upload.png")
+        st.image(image)
+
+        st.markdown(""" * After upload a video you can replay, save it or use another one """)
+        image = Image.open("images/save_vid.png")
+        st.image(image)
+
+        st.markdown(""" 
+        * When clicking on save the detection of the sign language will be displayed, a video a long with the word. Try it !!
+        """)
+
+        st.markdown("##### Option 2")
+        st.markdown(""" 
+        * You can record a video yourself on our website 
+        * Click on the Launch Webcam button to open the webcam
+        *  Press on S to start the countdown 
+        *  Press on Q to stop the recording 
+        *  You can either record another video or save it
+                        """)
+        image_1 = Image.open("images/webc.png")
+        st.image(image_1)
+        image = Image.open("images/counter.png")
+        st.image(image)
 
 if __name__ == '__main__':
 		main()	
