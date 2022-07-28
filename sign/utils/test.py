@@ -10,17 +10,17 @@ sys.path.append("..")
 
 video_path = sys.argv[1]
 file_code = sys.argv[2]
+path = video_path
+cap= cv2.VideoCapture(path)
+width= int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+height= int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 fourcc = cv2.VideoWriter_fourcc(*'MP4V')
-output = cv2.VideoWriter("videos/inference/"+file_code+".mp4", fourcc, 20.0, (640,480))
+output = cv2.VideoWriter("videos/inference/"+file_code+".mp4", fourcc, 30, (width,height))
 model = tf.keras.models.load_model("sign/train_tl")
 
 with open('sign/labels_encoder.pkl', 'rb') as f:
     labels_encoder = pickle.load(f)
 
-# the zero is for the live 
-path = 0 if video_path =="0" else video_path
-
-cap = cv2.VideoCapture(path)
 keypoints_frames = []
 count = 0
 result_label = ""
@@ -34,6 +34,8 @@ mp_hands = mp.solutions.hands
 
 def result(path,result_label,file_code):
 # calculate stuff
+    if result_label is None or result_label=="":
+        return 0
     with open('temp/result.txt', 'w') as fh:
         fh.write(result_label[0])
     return result_label[0]
@@ -100,15 +102,15 @@ with mp_hands.Hands(
     if results.multi_hand_landmarks:
       key_points = extract_keypoints(results)
       keypoints_frames.append(key_points)
-      if np.array([keypoints_frames]).shape[1]>=30 and count >=30:
-        predict = model.predict(np.array([keypoints_frames]))[0]
-        max_label = np.argmax(predict)
-        if predict[max_label] > 0.5:
-            result_label = le.inverse_transform([max_label])
-        else:
-            result_label = ""
-        count = 0
-        keypoints_frames = []
+#      if np.array([keypoints_frames]).shape[1]>=30 and count >=30:
+#        predict = model.predict(np.array([keypoints_frames]))[0]
+#        max_label = np.argmax(predict)
+#        if predict[max_label] > 0.5:
+#            result_label = le.inverse_transform([max_label])
+#        else:
+#            result_label = ""
+#        count = 0
+#       keypoints_frames = []
     
       
       for hand_landmarks in results.multi_hand_landmarks:

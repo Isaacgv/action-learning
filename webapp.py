@@ -66,11 +66,10 @@ def sign_recognition_video():
     
     
     run =st.button("Launch Recording Webcam")
-    file_code =str(uuid.uuid4())[:8]
-    path ="videos/keepers/"+file_code+".mp4"
-    
-    showthem =False
+
     if run:
+        file_code =str(uuid.uuid4())[:8]
+        path ="videos/keepers/"+file_code+".mp4"
         process =subprocess.run(["python", "camera.py",path])
        
         print(path)
