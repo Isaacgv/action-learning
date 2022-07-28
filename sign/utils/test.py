@@ -101,17 +101,16 @@ with mp_hands.Hands(
     if results.multi_hand_landmarks:
       key_points = extract_keypoints(results)
       keypoints_frames.append(key_points)
-#      if np.array([keypoints_frames]).shape[1]>=30 and count >=30:
-#        predict = model.predict(np.array([keypoints_frames]))[0]
-#        max_label = np.argmax(predict)
-#        if predict[max_label] > 0.5:
-#            result_label = le.inverse_transform([max_label])
-#        else:
-#            result_label = ""
-#        count = 0
-#       keypoints_frames = []
+      if np.array([keypoints_frames]).shape[1]>=43 and count >=43:
+        predict = model.predict(np.array([keypoints_frames]))[0]
+        max_label = np.argmax(predict)
+        if predict[max_label] > 0.5:
+            result_label = le.inverse_transform([max_label])
+        else:
+            result_label = ""
+        count = 0
+        keypoints_frames = []
     
-      
       for hand_landmarks in results.multi_hand_landmarks:
         #print('hand_landmarks:', hand_landmarks)
         mp_drawing.draw_landmarks(

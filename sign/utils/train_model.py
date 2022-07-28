@@ -41,9 +41,9 @@ def train_process(new_label:str, new_keypoints:list):
     try:
         with open(PATH + 'keypoints.pkl', 'rb') as f:
             keypoints = pickle.load(f)
-            keypoints.append(new_keypoints)
+            keypoints.append(new_keypoints[0])
     except:
-        keypoints =  [new_keypoints]
+        keypoints =  new_keypoints
     
     try:
         with open(PATH + 'labels.pkl', 'rb') as f:
@@ -62,8 +62,10 @@ def train_process(new_label:str, new_keypoints:list):
     labels_num = le.transform(labels)
     y = to_categorical(labels_num).astype(int)
 
+    
     keypoints = np.array(keypoints)
-
+    #print(keypoints)
+  
     keypoints_pad = tf.keras.preprocessing.sequence.pad_sequences(keypoints, maxlen=43, dtype='float32',)
 
     X_train, y_train = shuffle(keypoints_pad, y, random_state=0)
@@ -91,7 +93,7 @@ def train_process(new_label:str, new_keypoints:list):
     op = tf.keras.optimizers.Adam(learning_rate=0.001)
     model.compile(optimizer=op, loss='categorical_crossentropy', metrics=['categorical_accuracy'])
 
-    model.fit(tf_train_data, epochs=350, batch_size=batch_size)
+    model.fit(tf_train_data, epochs=200, batch_size=batch_size)
     model.save(PATH + "train_tl")
 
 
@@ -103,7 +105,6 @@ def dataset_path_labels(path_dataset):
     names = []
     for file in glob.glob(path_dataset + "/*"):
         label = file.split("/")[-1]
-        print(file)
         
         for file_img in glob.glob(file + "/*/images/*.jpg"):
             name = file_img.split("/")[3]
@@ -139,11 +140,10 @@ def extract_keypoints(results):
             
         keypoints.append(hand_keypoints)
         
-    if len(keypoints) == 1:
-        keypoints.append(list(np.zeros(len(keypoints[0]))))
-    elif len(keypoints) == 0:
-        keypoints.append(list(np.zeros(21*3)))
-        keypoints.append(list(np.zeros(21*3)))
+    if len(keypoints) == 1 :
+        keypoints.append((np.zeros(len(keypoints[0]))).tolist())
+    #elif len(keypoints) == 0 or keypoints == [[]]:
+    #    keypoints.append((np.zeros(21*3*2)).tolist())
 
     try:
         if hand_label_result[0] != 'Left':
@@ -152,6 +152,11 @@ def extract_keypoints(results):
             keypoints = keypoints[0] + keypoints[1]
     except:
         keypoints = keypoints[1] + keypoints[0]
+    
+    #if len(keypoints) == 21*3:
+    #    keypoints.extend((np.zeros(63)).tolist())
+    if keypoints == []:
+        print("keypoints is empty")
     return keypoints
 
 
@@ -174,16 +179,16 @@ def collect_keypoints(txtfiles):
             for idx, file in enumerate(file_label):
 
                 image = cv2.flip(cv2.imread(file), 1)
-                print(file)
+
                 image = cv2.imread(file)
                 # Convert the BGR image to RGB before processing.
                 results = hands.process(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
 
                 if not results.multi_hand_landmarks:
-                    keypoints_label.append(list(np.zeros(21*3)))
+                    keypoints_label.append(list(np.zeros(21*3*2)))
                     continue
                 keypoints_label.append(extract_keypoints(results))
-
+             
                 image_height, image_width, _ = image.shape
                 annotated_image = image.copy()
 
@@ -195,9 +200,10 @@ def collect_keypoints(txtfiles):
                         mp_hands.HAND_CONNECTIONS,
                         mp_drawing_styles.get_default_hand_landmarks_style(),
                         mp_drawing_styles.get_default_hand_connections_style())
-
+         
             keypoints.append(np.array(keypoints_label))
-            return keypoints
+    
+    return keypoints
 
 def new_keypoints_labels(path_dataset):
     txtfiles, labels = dataset_path_labels(path_dataset)
@@ -207,11 +213,11 @@ def new_keypoints_labels(path_dataset):
 
 def train_new_data(new_label:str, user:str):
     print("Training new data...")
-    path ="../videos/training/{}/{}/".format(new_label,user)
+    path ="videos/training/{}/{}/".format(new_label,user)
     all_paths_images= []
     for (dirpath, dirnames, filenames) in os.walk(path):
         all_paths_images.extend(filenames)
-    all_paths_images=[os.path.join(path, x) for x in all_paths_images]
+    all_paths_images=[os.path.join(path,"images", x) for x in all_paths_images]
     all_paths_images.sort(key=lambda x: int(x.split('/')[-1].split('.')[0]))
     new_keypoints = collect_keypoints([all_paths_images])
     train_process(new_label, new_keypoints)
