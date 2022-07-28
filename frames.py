@@ -1,5 +1,3 @@
-
-
 import cv2
 import os
 import sys
@@ -9,7 +7,7 @@ import sys
 def save_frames(label, path_to_video, video_time=3):
     cap = cv2.VideoCapture(path_to_video)
     user = path_to_video.split('/')[-1].split('.')[0]
-    path = "dataset/" + label + "/" + user 
+    path = "training/" + label + "/" + user 
     fps = cap.get(cv2.CAP_PROP_FPS)
     length = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     capture_time = fps//video_time
@@ -42,3 +40,12 @@ def save_frames(label, path_to_video, video_time=3):
     cap.release()
 
     cv2.destroyAllWindows()
+
+def main():
+    if len(sys.argv) > 0:
+        path_to_video = sys.argv[1]
+        label = sys.argv[2]
+        save_frames(label, path_to_video)
+        return 1
+    else: 
+        return 0
