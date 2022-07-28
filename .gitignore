@@ -148,3 +148,6 @@ data/
 
 #video
 videos/keepers/
+videos/training/
+videos/inference/
+
