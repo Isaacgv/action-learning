@@ -6,11 +6,11 @@ import pickle
 import numpy as np
 import sys
 import os
-sys.path.append("..")
 
+sys.path.append("..")
 video_path = sys.argv[1]
 file_code = sys.argv[2]
-path = video_path
+path =0 if  video_path =="0" else video_path 
 cap= cv2.VideoCapture(path)
 width= int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 height= int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
@@ -74,7 +74,6 @@ def extract_keypoints(results):
         keypoints = keypoints[1] + keypoints[0]
     return keypoints
 
-
 with mp_hands.Hands(
     model_complexity=0,
     min_detection_confidence=0.5,
@@ -131,8 +130,11 @@ with mp_hands.Hands(
     cv2.imshow('MediaPipe Hands', image)
     output.write(image)
     
-    if cv2.waitKey(1) & 0xFF == 27:
-      break
+    k = cv2.waitKey(1)
+    if k ==ord('q'):
+        break
+    if k ==ord('c'):
+        sys.exit()
 result(path,result_label,file_code)
 output.release()
 cap.release()
