@@ -36,6 +36,8 @@ def sign_recognition_video():
     This Sign Language Detection Model takes in a video as an input and then outputs that video """ +
     """along side the sign word equivalant in natutral Langauge</br></br> &#129330; &#10133; &#129302; &#10145;"""+
     """ Thank you !</p></br>""", unsafe_allow_html=True)
+    # sign_recognition_video_live]
+    run =st.button("Launch Live Webcam Recognizer")
   
     st.subheader("Option 1 - Upload a video")
     file = st.file_uploader('', type = ['mp4'])
@@ -62,7 +64,7 @@ def sign_recognition_video():
                 "timer for 3 Seconds</li><li>Press ( Q ) to Quit</p> ", unsafe_allow_html=True)
     
     
-    run =st.button("Launch Webcam")
+    run =st.button("Launch Recording Webcam")
     file_code =str(uuid.uuid4())[:8]
     path ="videos/keepers/"+file_code+".mp4"
     
@@ -160,7 +162,8 @@ def main():
     #["Show Instruction","Landmark identification","Show the #source code", "About"]
     if choice == "About":
         print()
-    if choice == "Sign Language Recognition":
+        
+    elif choice == "Sign Language Recognition":
         img_0.empty()   
         img_1.empty()  
         line_0.empty() 
@@ -168,7 +171,7 @@ def main():
         read_me.empty()
         read_repo.empty()
         
-        file_code =sign_recognition_video()
+        sign_recognition_video()
 
         
     elif choice == "Teach me a Sign":
