@@ -50,7 +50,7 @@ def train_process(new_label:str, new_keypoints:list):
             labels = pickle.load(f)
             labels.extend([new_label])
     except:
-        labels = new_label
+        labels = [new_label]
 
     save_labels_keypoints(labels, keypoints)
 
@@ -182,6 +182,7 @@ def collect_keypoints(txtfiles):
                 results = hands.process(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
 
                 if not results.multi_hand_landmarks:
+                    keypoints_label.append(list(np.zeros(21*3)))
                     continue
                 keypoints_label.append(extract_keypoints(results))
 
@@ -215,4 +216,4 @@ def train_new_data(new_label:str, user:str):
     all_paths_images=[os.path.join(path, x) for x in all_paths_images]
     all_paths_images.sort(key=lambda x: int(x.split('/')[-1].split('.')[0]))
     new_keypoints = collect_keypoints([all_paths_images])
-    train_process(new_label, new_keypoints[0])
+    train_process(new_label, new_keypoints)
