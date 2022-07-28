@@ -38,6 +38,7 @@ def sign_recognition_video():
     """ Thank you !</p></br>""", unsafe_allow_html=True)
     
     st.subheader("Option 1 - Live")
+    st.markdown("<p style='font-size: 20px' ><b>Instructions</b><ul><li>Press ( C ) to Close</p>", unsafe_allow_html=True)
     run_live =st.button("Launch Live Webcam Recognizer")
     if run_live:
         process =subprocess.run(["python", "sign/utils/test.py","0","live"])
@@ -48,13 +49,16 @@ def sign_recognition_video():
     if file is not None:
         file_path= os.path.join("videos/keepers",file.name)
         st.video(file)
-        save =st.button("Save Video")  
-        if save: 
+        run_recoginzer =st.button("Run Recognizer")
+        if run_recoginzer: 
             with open(file_path,"wb") as f: 
                 f.write(file.getbuffer())         
-                st.success("Saved File")
+                status_results=st.info("Running File...")
                 process =subprocess.run(["python", "sign/utils/test.py",os.path.join("videos/keepers",file.name),file.name.replace(".mp4","")])
                 time.sleep(2)
+                status_results.empty()
+                st.success("Results Ready...")
+                st.video("videos/inference/"+file.name)   
                 f = open("temp/result.txt","r")
                 x = (f.read())
                 st.success(x)
@@ -79,18 +83,20 @@ def sign_recognition_video():
         elif exists(path):
             st.write("Video Was Redorded!")
             st.video(path)
+            status_results=st.info("Running File...")
             process =subprocess.run(["python", "sign/utils/test.py",'videos/keepers/'+file_code+'.mp4',file_code])
-            keep =st.checkbox("Keep Video")
-            delete=st.checkbox("Delete Video")
-            time.sleep(1)
+            time.sleep(2)
+            status_results.empty()
+            st.success("Results Ready...")
             f = open("temp/result.txt","r")
             x = (f.read())
             st.video("videos/inference/"+file_code+".mp4")
-            st.write(x)
+            st.info(x)
+            keep =st.checkbox("Keep Video")
+            delete=st.checkbox("Delete Video")
             if keep:
                 st.write("Video Was Submited Sucessefully!!")
                 return file_code
-            
             elif delete:
                  pass
 
@@ -204,9 +210,17 @@ def main():
         ## Features:
         ##### Detecting Sign Language :
         There are two ways you can detect sign language:
-        * Click on Sign Language Recognition(Video)
+        * Click on Sign Language Recognition(Video)""")
+        
+        st.markdown("##### Option 1")
+        st.markdown(""" 
+        * You can open your Webcam on our website and get Live Feedback
+        * Click on the Launch Live Webcam button to open the webcam
+        *  Press on C to Close When you are done """)
+        image_0 = Image.open("images/live.png")
+        st.image(image_0)
 
-        ##### Option 1
+        st.markdown(""" ##### Option 2
         * Upload videos from your file 
         """)
         image = Image.open("images/upload.png")
@@ -220,10 +234,10 @@ def main():
         * When clicking on save the detection of the sign language will be displayed, a video a long with the word. Try it !!
         """)
 
-        st.markdown("##### Option 2")
+        st.markdown("##### Option 3")
         st.markdown(""" 
         * You can record a video yourself on our website 
-        * Click on the Launch Webcam button to open the webcam
+        * Click on the Launch Recording Webcam button to open the webcam
         *  Press on S to start the countdown 
         *  Press on Q to stop the recording 
         *  You can either record another video or save it
