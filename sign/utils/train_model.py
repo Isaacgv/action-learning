@@ -64,7 +64,7 @@ def train_process(new_label:str, new_keypoints:list):
 
     keypoints = np.array(keypoints)
 
-    keypoints_pad = tf.keras.preprocessing.sequence.pad_sequences(keypoints, maxlen=30, dtype='float32',)
+    keypoints_pad = tf.keras.preprocessing.sequence.pad_sequences(keypoints, maxlen=43, dtype='float32',)
 
     X_train, y_train = shuffle(keypoints_pad, y, random_state=0)
 
@@ -91,10 +91,8 @@ def train_process(new_label:str, new_keypoints:list):
     op = tf.keras.optimizers.Adam(learning_rate=0.001)
     model.compile(optimizer=op, loss='categorical_crossentropy', metrics=['categorical_accuracy'])
 
-    model.fit(tf_train_data, epochs=400, batch_size=batch_size)
+    model.fit(tf_train_data, epochs=350, batch_size=batch_size)
     model.save(PATH + "train_tl")
-
-    
 
 
 def dataset_path_labels(path_dataset):
