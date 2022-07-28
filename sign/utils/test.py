@@ -12,9 +12,9 @@ video_path = sys.argv[1]
 file_code = sys.argv[2]
 fourcc = cv2.VideoWriter_fourcc(*'MP4V')
 output = cv2.VideoWriter("videos/inference/"+file_code+".mp4", fourcc, 20.0, (640,480))
-model = tf.keras.models.load_model("mediapipe/train_tl")
+model = tf.keras.models.load_model("sign/train_tl")
 
-with open('mediapipe/labels_encoder.pkl', 'rb') as f:
+with open('sign/labels_encoder.pkl', 'rb') as f:
     labels_encoder = pickle.load(f)
 
 path = video_path
@@ -31,7 +31,6 @@ mp_drawing_styles = mp.solutions.drawing_styles
 mp_hands = mp.solutions.hands
 
 def result(path,result_label,file_code):
-    import sys
 # calculate stuff
     with open('temp/result.txt', 'w') as fh:
         fh.write(result_label[0])
@@ -126,10 +125,11 @@ with mp_hands.Hands(
                        cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
     
     cv2.imshow('MediaPipe Hands', image)
-    output.write(image)
+    #output.write(image)
     
     if cv2.waitKey(1) & 0xFF == 27:
       break
 result(path,result_label,file_code)
-cap.release()
 output.release()
+cap.release()
+

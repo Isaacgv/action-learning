@@ -48,7 +48,7 @@ def sign_recognition_video():
             with open(file_path,"wb") as f: 
                 f.write(file.getbuffer())         
                 st.success("Saved File")
-                process =subprocess.run(["python", "mediapipe/utils/test.py",os.path.join("videos/keepers",file.name),file.name.replace(".mp4","")])
+                process =subprocess.run(["python", "sign/utils/test.py",os.path.join("videos/keepers",file.name),file.name.replace(".mp4","")])
                 time.sleep(2)
                 f = open("temp/result.txt","r")
                 x = (f.read())
