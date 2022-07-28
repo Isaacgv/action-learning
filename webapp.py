@@ -6,6 +6,7 @@ from os.path import exists
 import uuid 
 from PIL import Image
 
+
 import sys
 sys.path.append("..")
 st.set_page_config(layout="wide")
@@ -69,12 +70,20 @@ def sign_recognition_video():
         elif exists(path):
             st.write("Video Was Redorded!")
             st.video(path)
-            process =subprocess.run(["python", "mediapipe/utils/test.py",'videos/keepers/'+file_code+'.mp4'])
+            process =subprocess.run(["python", "mediapipe/utils/test.py",'videos/keepers/'+file_code+'.mp4',file_code])
             keep =st.checkbox("Keep Video")
             delete=st.checkbox("Delete Video")
+            time.sleep(1)
+            f = open("temp/result.txt","r")
+            x = (f.read())
+            
+            st.video("videos/inference/"+file_code+".mp4")
+           
             if keep:
+                
                 st.write("Video Was Submited Sucessefully!!")
                 return file_code
+            
             elif delete:
                  pass
 
@@ -139,6 +148,7 @@ def main():
     [here](https://github.com/Isaacgv/action-learning/tree/main)""")
     
     st.sidebar.title("Select Activity")
+    
     choice  = st.sidebar.selectbox("MODE",("About","Instructions","Sign Language Recognition", "Teach me a Sign")) # "Sign Language Recognition(Image)",
     #["Show Instruction","Landmark identification","Show the #source code", "About"]
     if choice == "About":
@@ -152,6 +162,7 @@ def main():
         read_repo.empty()
         
         file_code =sign_recognition_video()
+
         
     elif choice == "Teach me a Sign":
         img_0.empty()   
@@ -162,6 +173,7 @@ def main():
         read_repo.empty()
    
         sign_recognition_Video_retraining()
+
     elif choice=="Instructions":
         img_0.empty()   
         img_1.empty()  
@@ -210,6 +222,7 @@ def main():
         st.image(image_1)
         image = Image.open("images/counter.png")
         st.image(image)
+
 
 if __name__ == '__main__':
 		main()	
