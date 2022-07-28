@@ -125,7 +125,7 @@ with mp_hands.Hands(
                        cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
     
     cv2.imshow('MediaPipe Hands', image)
-    #output.write(image)
+    output.write(image)
     
     if cv2.waitKey(1) & 0xFF == 27:
       break
