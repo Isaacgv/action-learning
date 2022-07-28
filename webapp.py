@@ -11,9 +11,7 @@ import mediapipe as mp
 import subprocess
 from os.path import exists
 import uuid 
-import shutil
-from PIL import Image
-import time
+
 
 import sys
 sys.path.append("..")
