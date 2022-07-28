@@ -36,10 +36,13 @@ def sign_recognition_video():
     This Sign Language Detection Model takes in a video as an input and then outputs that video """ +
     """along side the sign word equivalant in natutral Langauge</br></br> &#129330; &#10133; &#129302; &#10145;"""+
     """ Thank you !</p></br>""", unsafe_allow_html=True)
-    # sign_recognition_video_live]
-    run =st.button("Launch Live Webcam Recognizer")
-  
-    st.subheader("Option 1 - Upload a video")
+    
+    st.subheader("Option 1 - Live")
+    run_live =st.button("Launch Live Webcam Recognizer")
+    if run_live:
+        process =subprocess.run(["python", "sign/utils/test.py","0","live"])
+        
+    st.subheader("Option 2 - Upload a video")
     file = st.file_uploader('', type = ['mp4'])
   
     if file is not None:
@@ -56,10 +59,8 @@ def sign_recognition_video():
                 x = (f.read())
                 st.success(x)
                 
-                
-
     st.markdown("<hr style= size='6', color=black> ", unsafe_allow_html=True)
-    st.subheader("Option 2 - Redcord using Webcam")
+    st.subheader("Option 3 - Redcord using Webcam")
     st.markdown("<p style='font-size: 20px' ><b>Instructions</b><ul><li>Press ( S ) to Start</li><li>Wait the "+
                 "timer for 3 Seconds</li><li>Press ( Q ) to Quit</p> ", unsafe_allow_html=True)
     

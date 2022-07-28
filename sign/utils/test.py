@@ -17,7 +17,9 @@ model = tf.keras.models.load_model("sign/train_tl")
 with open('sign/labels_encoder.pkl', 'rb') as f:
     labels_encoder = pickle.load(f)
 
-path = video_path
+# the zero is for the live 
+path = 0 if video_path =="0" else video_path
+
 cap = cv2.VideoCapture(path)
 keypoints_frames = []
 count = 0
