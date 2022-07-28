@@ -46,7 +46,12 @@ def sign_recognition_video():
             with open(file_path,"wb") as f: 
                 f.write(file.getbuffer())         
                 st.success("Saved File")
-                process =subprocess.run(["python", "mediapipe/utils/test.py",os.path.join("videos/keepers",file.name)])
+                process =subprocess.run(["python", "mediapipe/utils/test.py",os.path.join("videos/keepers",file.name),file.name.replace(".mp4","")])
+                time.sleep(2)
+                f = open("temp/result.txt","r")
+                x = (f.read())
+                st.success(x)
+                
                 
 
     st.markdown("<hr style= size='6', color=black> ", unsafe_allow_html=True)
@@ -76,11 +81,9 @@ def sign_recognition_video():
             time.sleep(1)
             f = open("temp/result.txt","r")
             x = (f.read())
-            
             st.video("videos/inference/"+file_code+".mp4")
-           
+            st.write(x)
             if keep:
-                
                 st.write("Video Was Submited Sucessefully!!")
                 return file_code
             

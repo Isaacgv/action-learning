@@ -123,7 +123,8 @@ with mp_hands.Hands(
     
     cv2.imshow('MediaPipe Hands', image)
     
-    if cv2.waitKey(5) & 0xFF == 27:
+    if cv2.waitKey(1) & 0xFF == 27:
       break
+  
 cap.release()
 result(path,result_label,file_code)
