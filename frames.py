@@ -34,7 +34,7 @@ def save_frames(user_name,label, path_to_video, video_time=3):
         else:
             break
 
-    os.system("cp "+ path_to_video + " " + "videos/training/"+label+".mp4")
+    os.system("cp "+ path_to_video + " " + "videos/training/"+label+"/"+label+".mp4")
     cap.release()
 
     cv2.destroyAllWindows()

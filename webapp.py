@@ -77,7 +77,7 @@ def sign_recognition_video():
         elif exists(path):
             st.write("Video Was Redorded!")
             st.video(path)
-            process =subprocess.run(["python", "mediapipe/utils/test.py",'videos/keepers/'+file_code+'.mp4',file_code])
+            process =subprocess.run(["python", "sign/utils/test.py",'videos/keepers/'+file_code+'.mp4',file_code])
             keep =st.checkbox("Keep Video")
             delete=st.checkbox("Delete Video")
             time.sleep(1)
